@@ -4,6 +4,14 @@ import (
 	"fmt"
 )
 
+func asciiLoop() {
+	fmt.Println()
+
+	for i := 33; i <= 122; i++ {
+		fmt.Printf("%d - %c\n", i, i)
+	}
+}
+
 func main() {
 	for x := 0; x < 10; x++ {
 		fmt.Println(x)
@@ -32,4 +40,6 @@ func main() {
 		}
 		fmt.Println(n)
 	}
+
+	asciiLoop()
 }
