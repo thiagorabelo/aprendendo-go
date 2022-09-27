@@ -20,7 +20,7 @@ func main() {
 		// fmt.Printf("Eu sou uma função f(%d)\n", i)
 		return i
 	}
-	fmt.Printf("%v, %v, '%T'\n", f, f(10), f) // 0x4824a0, 10, 'func(int32) int32'
+	fmt.Printf("'%T', %v\n", f, f(10)) // 'func(int32) int32', 10
 
 	calcSoma, calSub := calculosMatematicos(896, 128)
 	fmt.Printf("A soma é %d e a subtração é %d\n", calcSoma, calSub)
