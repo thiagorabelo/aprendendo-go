@@ -9,7 +9,7 @@ type pessoa struct {
 }
 
 type estudante struct {
-	pessoa    // desempacotando o pessoa detro de estudante
+	pessoa    // desempacotando a struct pessoa detro de estudante
 	matricula string
 	curso     string
 }
