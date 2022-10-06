@@ -4,40 +4,41 @@ import (
 	"api/src/banco"
 	"api/src/modelos"
 	"api/src/repositorios"
+	"api/src/respostas"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"log"
+	"io"
 	"net/http"
 )
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		// w.WriteHeader(http.StatusInternalServerError)
-		// w.Write([]byte("Erro ao ler o corpo da requisição"))
-		log.Fatal(err)
+		respostas.Erro(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	var usuario modelos.Usuario
 	if err = json.Unmarshal(body, &usuario); err != nil {
-		log.Fatal(err)
+		respostas.Erro(w, http.StatusBadRequest, err)
+		return
 	}
 
 	db, err := banco.Conectar()
 	if err != nil {
-		log.Fatal(err)
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
 	}
+	defer db.Close()
 
 	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 
-	id, err := repositorio.Criar(usuario)
+	usuario.Id, err = repositorio.Criar(usuario)
 	if err != nil {
-		log.Fatal(err)
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("Id inserido: %d", id)))
+	respostas.JSON(w, http.StatusCreated, usuario)
 }
 
 func ListarUsuarios(w http.ResponseWriter, r *http.Request) {
