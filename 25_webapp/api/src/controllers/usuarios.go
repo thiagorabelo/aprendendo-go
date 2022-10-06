@@ -1,9 +1,43 @@
 package controllers
 
-import "net/http"
+import (
+	"api/src/banco"
+	"api/src/modelos"
+	"api/src/repositorios"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+)
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Criando Usuário"))
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		// w.WriteHeader(http.StatusInternalServerError)
+		// w.Write([]byte("Erro ao ler o corpo da requisição"))
+		log.Fatal(err)
+		return
+	}
+
+	var usuario modelos.Usuario
+	if err = json.Unmarshal(body, &usuario); err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := banco.Conectar()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+
+	id, err := repositorio.Criar(usuario)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Write([]byte(fmt.Sprintf("Id inserido: %d", id)))
 }
 
 func ListarUsuarios(w http.ResponseWriter, r *http.Request) {
