@@ -7,9 +7,15 @@ import (
 )
 
 func JSON(w http.ResponseWriter, statusCode int, dados interface{}) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	if err := json.NewEncoder(w).Encode(dados); err != nil {
-		log.Fatal(err)
+
+	// Evita erro quando o status code é "No Content (204)",
+	// pois mesmo nil é tratado como "conteúdo".
+	if dados != nil {
+		if err := json.NewEncoder(w).Encode(dados); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 

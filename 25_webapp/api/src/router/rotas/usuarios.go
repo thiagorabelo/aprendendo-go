@@ -15,13 +15,13 @@ var rotasUsuarios = []Rota{
 	{
 		URI:                "/usuarios",
 		Metodo:             http.MethodGet,
-		Funcao:             controllers.ListarUsuarios,
+		Funcao:             controllers.BuscarUsuarios,
 		RequerAutenticacao: false,
 	},
 	{
 		URI:                "/usuarios/{usuarioId}",
 		Metodo:             http.MethodGet,
-		Funcao:             controllers.MostrarUsuario,
+		Funcao:             controllers.BuscarUsuario,
 		RequerAutenticacao: false,
 	},
 	{
