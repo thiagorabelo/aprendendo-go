@@ -10,8 +10,14 @@ import (
 )
 
 var (
+	// URLBanco é a URL de conexão com o banco de dados
 	URLBanco = ""
-	Porta    = 0
+
+	// Porta onde a API irá escutar
+	Porta = 0
+
+	// SecretKey é a chave usada para assinar o token
+	SecretKey []byte
 )
 
 func Carregar() {
@@ -36,4 +42,6 @@ func Carregar() {
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
 	)
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }

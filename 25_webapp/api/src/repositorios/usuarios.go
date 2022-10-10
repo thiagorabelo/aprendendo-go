@@ -90,7 +90,7 @@ func (repositorio Usuarios) BuscarPorId(id uint64) (modelos.Usuario, error) {
 			&usuario.Email,
 			&usuario.CriadoEm,
 		); err != nil {
-			return modelos.Usuario{}, nil
+			return modelos.Usuario{}, err
 		}
 	}
 
@@ -125,4 +125,22 @@ func (repositorio Usuarios) Deletar(usuarioId uint64) error {
 	}
 
 	return nil
+}
+
+func (repositorio Usuarios) BuscarPorEmail(email string) (modelos.Usuario, error) {
+	linha, err := repositorio.db.Query("select id, senha from usuarios where email = ?", email)
+	if err != nil {
+		return modelos.Usuario{}, err
+	}
+	defer linha.Close()
+
+	var usuario modelos.Usuario
+
+	if linha.Next() {
+		if err := linha.Scan(&usuario.Id, &usuario.Senha); err != nil {
+			return modelos.Usuario{}, err
+		}
+	}
+
+	return usuario, nil
 }
