@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"api/src/autenticacao"
 	"api/src/banco"
 	"api/src/modelos"
 	"api/src/repositorios"
@@ -114,6 +115,17 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	usuarioAutenticadoId, err := autenticacao.ExtrairUsuarioId(r)
+	if err != nil {
+		respostas.Erro(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if usuarioAutenticadoId != usuarioId {
+		respostas.Erro(w, http.StatusForbidden, errors.New("não é permitido atualizar o usuário de terceiro"))
+		return
+	}
+
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		respostas.Erro(w, http.StatusUnprocessableEntity, err)
@@ -152,6 +164,17 @@ func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 	usuarioId, err := strconv.ParseUint(parametros["usuarioId"], 10, 64)
 	if err != nil {
 		respostas.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	usuarioAutenticadoId, err := autenticacao.ExtrairUsuarioId(r)
+	if err != nil {
+		respostas.Erro(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if usuarioAutenticadoId != usuarioId {
+		respostas.Erro(w, http.StatusForbidden, errors.New("não é permitido apagar o usuário de terceiro"))
 		return
 	}
 
