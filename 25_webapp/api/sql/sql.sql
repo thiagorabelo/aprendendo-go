@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS social;
 USE social;
 
+DROP TABLE IF EXISTS seguidores;
 DROP TABLE IF EXISTS usuarios;
 
 CREATE TABLE usuarios (
@@ -21,3 +22,17 @@ GRANT ALL PRIVILEGES ON <database> TO '<myuser>'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 
 */
+
+CREATE TABLE seguidores (
+	usuario_id INT NOT NULL,
+	FOREIGN KEY (usuario_id)
+	REFERENCES usuarios(id)
+	ON DELETE CASCADE,
+
+	seguidor_id INT NOT NULL,
+	FOREIGN KEY (seguidor_id)
+	REFERENCES usuarios(id)
+	ON DELETE CASCADE,
+
+	PRIMARY KEY(usuario_id, seguidor_id)
+) ENGINE=INNODB;
