@@ -1,16 +1,17 @@
 CREATE DATABASE IF NOT EXISTS social;
 USE social;
 
+DROP TABLE IF EXISTS publicacoes;
 DROP TABLE IF EXISTS seguidores;
 DROP TABLE IF EXISTS usuarios;
 
 CREATE TABLE usuarios (
-    id int auto_increment primary key,
-    nome varchar(127) not null,
-    nick varchar(50) not null unique,
-    email varchar(50) not null unique,
-    senha varchar(100) not null,
-    criadoEm timestamp default current_timestamp()
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(127) NOT NULL,
+    nick VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(50) NOT NULL UNIQUE,
+    senha VARCHAR(100) NOT NULL,
+    criadoEm TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
 ) ENGINE=INNODB;
 
 /*
@@ -35,4 +36,20 @@ CREATE TABLE seguidores (
 	ON DELETE CASCADE,
 
 	PRIMARY KEY(usuario_id, seguidor_id)
+) ENGINE=INNODB;
+
+
+CREATE TABLE publicacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(50) NOT NULL,
+    conteudo VARCHAR(300) NOT NULL,
+
+    autor_id INT NOT NULL,
+    FOREIGN KEY (autor_id)
+    REFERENCES usuarios(id)
+    ON DELETE CASCADE,
+
+    curtidas INT DEFAULT 0,
+
+    criadaEm TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=INNODB;

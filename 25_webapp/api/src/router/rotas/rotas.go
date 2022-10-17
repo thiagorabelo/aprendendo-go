@@ -15,10 +15,8 @@ type Rota struct {
 }
 
 func Configurar(router *mux.Router) *mux.Router {
-	rotas := append(
-		rotasUsuarios,
-		rotaLogin,
-	)
+	rotas := append(rotasUsuarios, rotaLogin)
+	rotas = append(rotas, rotasPublicacoes...)
 
 	for _, rota := range rotas {
 		var handler http.HandlerFunc = nil
