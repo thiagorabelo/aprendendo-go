@@ -74,6 +74,7 @@ func (repositorio Publicacoes) Buscar(usuarioId uint64) ([]modelos.Publicacao, e
 		func(r *sql.Rows) (modelos.Publicacao, error) {
 			var publicacao modelos.Publicacao
 			if err := r.Scan(
+				&publicacao.Id,
 				&publicacao.Titulo,
 				&publicacao.Conteudo,
 				&publicacao.AutorId,
@@ -88,7 +89,7 @@ func (repositorio Publicacoes) Buscar(usuarioId uint64) ([]modelos.Publicacao, e
 		},
 
 		`
-		select distinct p.titulo, p.conteudo, p.autor_id, p.curtidas, p.criadaEm, u.nick
+		select distinct p.id, p.titulo, p.conteudo, p.autor_id, p.curtidas, p.criadaEm, u.nick
 		from publicacoes p
 		join usuarios u on u.id=p.autor_id
 		join seguidores s on s.usuario_id=u.id
@@ -110,6 +111,7 @@ func (repositorio Publicacoes) BuscarPorId(publicacaoId uint64) (modelos.Publica
 		func(r *sql.Rows) (modelos.Publicacao, error) {
 			var publicacao modelos.Publicacao
 			if err := r.Scan(
+				&publicacao.Id,
 				&publicacao.Titulo,
 				&publicacao.Conteudo,
 				&publicacao.AutorId,
@@ -123,7 +125,7 @@ func (repositorio Publicacoes) BuscarPorId(publicacaoId uint64) (modelos.Publica
 		},
 
 		`
-		select p.titulo, p.conteudo, p.autor_id, p.curtidas, p.criadaEm, u.nick
+		select p.id, p.titulo, p.conteudo, p.autor_id, p.curtidas, p.criadaEm, u.nick
 		from publicacoes p
 		join usuarios u on u.id=p.autor_id
 		where p.id = ?`,
@@ -135,4 +137,77 @@ func (repositorio Publicacoes) BuscarPorId(publicacaoId uint64) (modelos.Publica
 	}
 
 	return publicacoes[0], nil
+}
+
+func (repositorio Publicacoes) Atualizar(publicacaoId uint64, publicacao modelos.Publicacao) error {
+	_, err := repositorio.execute(
+		"update publicacoes set titulo = ?, conteudo = ? where id = ?",
+		publicacao.Titulo,
+		publicacao.Conteudo,
+		publicacaoId,
+	)
+
+	return err
+}
+
+func (repositorio Publicacoes) Deletar(publicacaoId uint64) error {
+	_, err := repositorio.execute(
+		"delete from publicacoes where id = ?",
+		publicacaoId,
+	)
+	return err
+}
+
+func (repositorio Publicacoes) BuscarPorUsuario(usuarioId uint64) ([]modelos.Publicacao, error) {
+	publicacoes, err := repositorio.queryPublicacoes(
+		func(r *sql.Rows) (modelos.Publicacao, error) {
+			var publicacao modelos.Publicacao
+			err := r.Scan(
+				&publicacao.Id,
+				&publicacao.Titulo,
+				&publicacao.Conteudo,
+				&publicacao.AutorId,
+				&publicacao.Curtidas,
+				&publicacao.CriadaEm,
+				&publicacao.AutorNick,
+			)
+
+			return publicacao, err
+		},
+
+		`
+		select distinct p.id, p.titulo, p.conteudo, p.autor_id, p.curtidas, p.criadaEm, u.nick
+		from publicacoes p
+		join usuarios u on u.id=p.autor_id
+		where p.autor_id = ?
+		order by p.id desc`,
+		usuarioId,
+	)
+
+	return publicacoes, err
+}
+
+func (repositorio Publicacoes) Curtir(publicacaoId uint64) error {
+	_, err := repositorio.execute(
+		"update publicacoes set curtidas = curtidas + 1 where id = ?",
+		publicacaoId,
+	)
+
+	return err
+}
+
+func (repositorio Publicacoes) Descurtir(publicacaoId uint64) error {
+	_, err := repositorio.execute(
+		`
+		update publicacoes
+		set
+		curtidas = case
+			when curtidas > 0 then curtidas - 1
+			else 0
+		end
+		where id = ?`,
+		publicacaoId,
+	)
+
+	return err
 }
