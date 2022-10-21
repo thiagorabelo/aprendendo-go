@@ -10,6 +10,10 @@ type ErroAPI struct {
 	Erro string `json:"erro"`
 }
 
+func InformaErro(w http.ResponseWriter, statusCode int, err error) {
+	JSON(w, statusCode, ErroAPI{Erro: err.Error()})
+}
+
 func JSON(w http.ResponseWriter, statusCode int, dados interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
