@@ -27,7 +27,7 @@ func Configurar(router *mux.Router) *mux.Router {
 
 		// Adicionar outros middlewares
 
-		// Default - Sem outros middleware
+		// Default - Sem outros middlewares
 		if handler == nil {
 			handler = rota.Funcao
 		}

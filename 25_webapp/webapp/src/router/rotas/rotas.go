@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"webapp/src/middlewares"
 
 	"github.com/gorilla/mux"
 )
@@ -18,10 +19,27 @@ type Rota struct {
 
 func Configurar(router *mux.Router) *mux.Router {
 	rotas := rotasLogin
+	rotas = append(rotas, rotaPaginaPrincipal)
 	rotas = append(rotas, rotasUsuarios...)
 
 	for _, rota := range rotas {
-		router.HandleFunc(rota.URI, rota.Funcao).Methods(rota.Metodo)
+		var handler http.HandlerFunc
+
+		if rota.RequerAutenticacao {
+			handler = middlewares.Autenticar(rota.Funcao)
+		}
+
+		// Adicionar outros middlewares
+
+		// Default - Sem outros middlewares
+		if handler == nil {
+			handler = rota.Funcao
+		}
+
+		router.HandleFunc(
+			rota.URI,
+			middlewares.Logger(handler), // Middleware de Logger é sempre aplicado
+		).Methods(rota.Metodo)
 	}
 
 	cwd, err := os.Getwd()
