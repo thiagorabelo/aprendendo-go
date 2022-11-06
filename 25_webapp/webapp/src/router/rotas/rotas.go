@@ -21,6 +21,7 @@ func Configurar(router *mux.Router) *mux.Router {
 	rotas := rotasLogin
 	rotas = append(rotas, rotaPaginaPrincipal)
 	rotas = append(rotas, rotasUsuarios...)
+	rotas = append(rotas, rotasPublicacoes...)
 
 	for _, rota := range rotas {
 		var handler http.HandlerFunc

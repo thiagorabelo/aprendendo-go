@@ -1,0 +1,45 @@
+{{ define "editar" }}
+    <a href="/editar" style="text-decoration: none;">
+        <i class="bi bi-pencil-square"></i>
+    </a>
+{{ end }}
+
+{{ define "deletar" }}
+    <a href="/deletar" style="text-decoration: none;">
+        <i class="bi bi-trash text-danger"></i>
+    </a>
+{{ end }}
+
+{{ define "curtidas" }}
+    <i class="bi bi-heart-fill curtir-publicacao"></i>
+    <span>{{ .Curtidas }}</span>
+{{ end }}
+
+{{ define "cabecalho-publicacao" }}
+    <h1 class="display-4">{{ .Titulo }}</h1>
+    <p class="lead">{{ .Conteudo }}</p>
+    <!-- Formatação de dadas no Go
+        Jan 2 15:04:05 2006
+        1   2 3  4  5  6
+    -->
+    <a href="#">{{ .AutorNick }} - {{ .CriadaEm.Format "02/01/2006 3:4" }}</a>
+    <hr class="my-4">
+{{ end }}
+
+{{ define "publicacao-com-permissao" }}
+    <div class="jumbotron publicacao-container" data-publicacao-id="{{ .Id }}">
+        {{ template "cabecalho-publicacao" . }}
+        <p>
+            {{ template "curtidas" . }}
+            {{ template "editar" . }}
+            {{ template "deletar" . }}
+        </p>
+    </div>
+{{ end }}
+    
+{{ define "publicacao-sem-permissao" }}
+    <div class="jumbotron publicacao-container" data-publicacao-id="{{ .Id }}">
+        {{ template "cabecalho-publicacao" . }}
+        <p>{{ template "curtidas" . }}</p>
+    </div>
+{{ end }}
