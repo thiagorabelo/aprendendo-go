@@ -1,6 +1,6 @@
 $(function() {
     /**
-     * @param {Event} event 
+     * @param {Event} event
      */
     function criarPublicacao(event) {
         event.preventDefault();
@@ -21,8 +21,8 @@ $(function() {
     }
 
     /**
-     * 
-     * @param {Event} event 
+     *
+     * @param {Event} event
      */
     function curtirPublicacao(event) {
         event.preventDefault();
@@ -39,6 +39,12 @@ $(function() {
             const contadorDeCurtidas = target.next("span");
             const totalCurtidas = parseInt(contadorDeCurtidas.text());
             contadorDeCurtidas.text(totalCurtidas + 1);
+
+            target
+                .removeClass("curtir-publicacao")
+                .addClass("descurtir-publicacao")
+                .addClass("text-danger")
+            ;
         }).fail(function() {
             alert("Erro ao curtir publicação");
         }).always(function() {
@@ -46,6 +52,40 @@ $(function() {
         });
     }
 
+    /**
+     *
+     * @param {Event} event
+     */
+    function descurtirPublicacao(event) {
+        event.preventDefault();
+
+        const target = $(event.target);
+        const publicacaoContainer = target.closest(".publicacao-container");
+        const publicacaoId = publicacaoContainer.data('publicacao-id')
+
+        target.prop("disabled", true)
+        $.ajax({
+            url: `/publicacoes/${publicacaoId}/descurtir`,
+            method: "POST"
+        }).done(function() {
+            const contadorDeCurtidas = target.next("span");
+            const totalCurtidas = parseInt(contadorDeCurtidas.text());
+            contadorDeCurtidas.text(totalCurtidas - 1);
+
+            target
+                .addClass("curtir-publicacao")
+                .removeClass("descurtir-publicacao")
+                .removeClass("text-danger")
+            ;
+        }).fail(function() {
+            alert("Erro ao descurtir publicação");
+        }).always(function() {
+            target.prop("disabled", false)
+        });
+    }
+
     $("#nova-publicacao").on("submit", criarPublicacao);
-    $(".curtir-publicacao").on("click", curtirPublicacao);
+
+    $(document).on("click", ".curtir-publicacao", curtirPublicacao);
+    $(document).on("click", ".descurtir-publicacao", descurtirPublicacao);
 });
