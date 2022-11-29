@@ -21,6 +21,32 @@ $(function() {
     }
 
     /**
+     * @param {Event} event
+     */
+    function atualizarPublicacao(event) {
+        event.preventDefault();
+        const form = $(event.target);
+        const btn = form.find("button[type=submit]");
+        const publicacaoId = btn.data("publicacao-id");
+        btn.prop("disabled", true);
+
+        $.ajax({
+            url: `/publicacoes/${publicacaoId}`,
+            method: "PUT",
+            data: {
+                titulo: form.find("#titulo").val(),
+                conteudo: form.find("#conteudo").val()
+            }
+        }).done(function() {
+            alert("Publicação editada com sucesso!");
+        }).fail(function() {
+            alert("Erro ao editar publicação!");
+        }).always(function() {
+            btn.prop("disabled", false);
+        })
+    }
+
+    /**
      *
      * @param {Event} event
      */
@@ -85,6 +111,7 @@ $(function() {
     }
 
     $("#nova-publicacao").on("submit", criarPublicacao);
+    $("#editar-publicacao").on("submit", atualizarPublicacao);
 
     $(document).on("click", ".curtir-publicacao", curtirPublicacao);
     $(document).on("click", ".descurtir-publicacao", descurtirPublicacao);

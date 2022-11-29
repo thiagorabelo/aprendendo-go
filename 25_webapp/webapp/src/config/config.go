@@ -41,6 +41,7 @@ func Carregar() {
 }
 
 // API concatena url com o host da API retornando uma URI para comunicação com a API
-func API(url string) string {
+func API(url string, args ...any) string {
+	url = fmt.Sprintf(url, args...)
 	return fmt.Sprintf("%s%s", APIURL, url)
 }

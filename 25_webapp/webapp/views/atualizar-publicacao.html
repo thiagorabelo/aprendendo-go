@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social - Atualizar Publicação - {{ .Titulo }}</title>
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+
+    {{ template "estilo" }}
+</head>
+
+<body>
+    {{ template "cabecalho" }}
+
+    <div class="container-fluid">
+        <div class="row mt-4">
+            <div class="col-12">
+                <h3>Atualizar Publicação</h3>
+                <fieldset>
+                    <form id="editar-publicacao" action="." method="post">
+                        <div class="form-group">
+                            <label for="titulo">Título</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required="required"
+                                placeholder="Insira o título da sua publicação"
+                                value="{{ .Titulo }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="conteudo">Conteúdo</label>
+                            <textarea class="form-control" name="conteudo" id="conteudo" required="required"
+                                placeholder="Insira o conteúdo de sua publicação">{{ .Conteudo }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-info" data-publicacao-id="{{ .Id }}">
+                            Salvar Alterações
+                        </button>
+                    </form>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+    {{ template "rodape" }}
+    {{ template "scripts" }}
+    <script type="text/javascript" src="/assets/js/publicacoes.js"></script>
+</body>
+</html>
