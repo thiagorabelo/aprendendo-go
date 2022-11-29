@@ -20,7 +20,7 @@ func CarregarPaginaDeCadastroDeUsuario(w http.ResponseWriter, r *http.Request) {
 }
 
 func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
-	response, err := requisicoes.FazerRequisicaoCOmAutenticacao(r, http.MethodGet, "/publicacoes", nil)
+	response, err := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, "/publicacoes", nil)
 	if err != nil {
 		respostas.InformaErro(w, http.StatusInternalServerError, err)
 		return

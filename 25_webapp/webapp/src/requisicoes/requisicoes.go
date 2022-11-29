@@ -8,7 +8,7 @@ import (
 	"webapp/src/cookies"
 )
 
-func FazerRequisicaoCOmAutenticacao(r *http.Request, metodo, url string, dados io.Reader) (*http.Response, error) {
+func FazerRequisicaoComAutenticacao(r *http.Request, metodo, url string, dados io.Reader) (*http.Response, error) {
 	uri := config.API(url)
 
 	request, err := http.NewRequest(metodo, uri, dados)

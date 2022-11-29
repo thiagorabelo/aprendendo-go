@@ -5,13 +5,11 @@
 {{ end }}
 
 {{ define "deletar" }}
-    <a href="/deletar" style="text-decoration: none;">
-        <i class="bi bi-trash text-danger"></i>
-    </a>
+    <i class="bi bi-trash text-danger deletar-publicacao" style="cursor: pointer;"></i>
 {{ end }}
 
 {{ define "curtidas" }}
-    <i class="bi bi-heart-fill curtir-publicacao"></i>
+    <i class="bi bi-heart-fill curtir-publicacao" style="cursor: pointer;"></i>
     <span>{{ .Curtidas }}</span>
 {{ end }}
 
@@ -36,7 +34,7 @@
         </p>
     </div>
 {{ end }}
-    
+
 {{ define "publicacao-sem-permissao" }}
     <div class="jumbotron publicacao-container" data-publicacao-id="{{ .Id }}">
         {{ template "cabecalho-publicacao" . }}

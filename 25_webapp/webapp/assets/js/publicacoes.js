@@ -5,18 +5,22 @@ $(function() {
     function criarPublicacao(event) {
         event.preventDefault();
         const form = $(event.target);
+        const tituloField = form.find("#titulo");
+        const conteudoField = form.find("#conteudo");
 
         $.ajax({
             url: "/publicacoes",
             method: "POST",
             data: {
-                titulo: form.find("#titulo").val(),
-                conteudo: form.find("#conteudo").val()
+                titulo: tituloField.val(),
+                conteudo: conteudoField.val()
             }
         }).done(function(){
+            tituloField.val("");
+            conteudoField.val("");
             window.location.reload();
         }).fail(function(){
-            alert("Erro ao criar publicação");
+            Swal.fire("Ops...", "Erro ao criar publicação", "error");
         });
     }
 
@@ -38,9 +42,15 @@ $(function() {
                 conteudo: form.find("#conteudo").val()
             }
         }).done(function() {
-            alert("Publicação editada com sucesso!");
+            Swal.fire(
+                "Sucesso!",
+                "Publicação criada com sucesso!",
+                "success"
+            ).then(function() {
+                window.location = "/home";
+            })
         }).fail(function() {
-            alert("Erro ao editar publicação!");
+            Swal.fire("Ops...", "Erro ao editar publicação!", "error");
         }).always(function() {
             btn.prop("disabled", false);
         })
@@ -72,7 +82,7 @@ $(function() {
                 .addClass("text-danger")
             ;
         }).fail(function() {
-            alert("Erro ao curtir publicação");
+            Swal.fire("Ops...", "Erro ao curtir publicação", "error");
         }).always(function() {
             target.prop("disabled", false)
         });
@@ -104,14 +114,60 @@ $(function() {
                 .removeClass("text-danger")
             ;
         }).fail(function() {
-            alert("Erro ao descurtir publicação");
+            Swal.fire("Ops...", "Erro ao descurtir publicação", "error");
         }).always(function() {
             target.prop("disabled", false)
         });
     }
 
+    /**
+     *
+     * @param {Event} event
+     */
+    function deletarPublicacao(event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: "Atenção!",
+            text: "Esta ação é irreverssível. Deseja realmente excluir a publicação?",
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            icon: "warning"
+        }).then(function(confirmacao) {
+            if (!confirmacao.value) return;
+
+            const target = $(event.target);
+            const publicacaoContainer = target.closest(".publicacao-container")
+            const publicacaoId = publicacaoContainer.data("publicacao-id");
+
+            target.prop("disabled", true);
+            $.ajax({
+                url: `/publicacoes/${publicacaoId}`,
+                method: "DELETE"
+            }).done(function() {
+                publicacaoContainer.animate({opacity: 0}, 200, function() {
+                    $(this).animate({height: 0, paddingBottom: 0, paddingTop: 0}, 200, function() {
+                        $(this).remove();
+                        Swal.fire({
+                            // position: 'top-end',
+                            icon: 'success',
+                            title: 'A publicação foi apagada.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    });
+                });
+            }).fail(function(){
+                Swal.fire("Ops...", "Erro ao excluir publicação", "error");
+            }).always(function() {
+                target.prop("disabled", false);
+            });
+        });
+    }
+
     $("#nova-publicacao").on("submit", criarPublicacao);
     $("#editar-publicacao").on("submit", atualizarPublicacao);
+    $(".deletar-publicacao").on("click", deletarPublicacao);
 
     $(document).on("click", ".curtir-publicacao", curtirPublicacao);
     $(document).on("click", ".descurtir-publicacao", descurtirPublicacao);

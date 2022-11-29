@@ -10,7 +10,7 @@ $(function () {
         var form = $(event.target);
 
         if (form.find('#senha').val() != form.find('#confirmar-senha').val()) {
-            alert('As senhas não coincidem');
+            Swal.fire("Ops...", "As senhas não coincidem", "error");
             return;
         }
 
@@ -24,9 +24,12 @@ $(function () {
                 senha: form.find("#senha").val()
             }
         }).done(function() {
-            alert("Usuário cadastrado com sucesso!");
+            Swal.fire("Sucesso!", "Usuário cadastrado com sucesso!", "success")
+                .then(function() {
+                    window.location = "/";
+                });
         }).fail(function(erro) {
-            alert("Erro ao cadastrar usuário.");
+            Swal.fire("Ops...", "Erro ao cadastrar usuário.", "error");
             console.log(erro)
         });
     }
