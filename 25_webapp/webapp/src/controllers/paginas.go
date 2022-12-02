@@ -12,6 +12,11 @@ import (
 )
 
 func CarregarTelaDeLogin(w http.ResponseWriter, r *http.Request) {
+	if cookie, _ := cookies.Ler(r); cookie != nil && cookie["token"] != "" {
+		http.Redirect(w, r, "/home", http.StatusFound)
+		return
+	}
+
 	utils.ExecutarTemplate(w, "login.html", nil)
 }
 
