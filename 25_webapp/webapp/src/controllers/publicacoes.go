@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"webapp/src/modelos"
 	"webapp/src/requisicoes"
 	"webapp/src/respostas"
-	"webapp/src/utils"
 
 	"github.com/gorilla/mux"
 )
@@ -101,40 +99,6 @@ func DescurtirPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respostas.JSON(w, response.StatusCode, nil)
-}
-
-func CarregarTelaDeAtualizacaoDePublicacao(w http.ResponseWriter, r *http.Request) {
-	parametros := mux.Vars(r)
-	publicacaoId, err := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
-	if err != nil {
-		respostas.InformaErro(w, http.StatusBadRequest, err)
-		return
-	}
-
-	response, err := requisicoes.FazerRequisicaoComAutenticacao(
-		r,
-		http.MethodGet,
-		fmt.Sprintf("/publicacoes/%d", publicacaoId),
-		nil,
-	)
-	if err != nil {
-		respostas.InformaErro(w, http.StatusInternalServerError, err)
-		return
-	}
-	defer response.Body.Close()
-
-	if response.StatusCode >= 400 {
-		respostas.TratarStatusCodeDeErro(w, response)
-		return
-	}
-
-	var publicacao modelos.Publicacao
-	if err = json.NewDecoder(response.Body).Decode(&publicacao); err != nil {
-		respostas.InformaErro(w, http.StatusUnprocessableEntity, err)
-		return
-	}
-
-	utils.ExecutarTemplate(w, "atualizar-publicacao.html", publicacao)
 }
 
 func AtualizarPublicacao(w http.ResponseWriter, r *http.Request) {

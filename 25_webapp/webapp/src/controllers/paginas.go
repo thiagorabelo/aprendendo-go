@@ -2,13 +2,18 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
+	"strings"
 	"webapp/src/cookies"
 	"webapp/src/modelos"
 	"webapp/src/requisicoes"
 	"webapp/src/respostas"
 	"webapp/src/utils"
+
+	"github.com/gorilla/mux"
 )
 
 func CarregarTelaDeLogin(w http.ResponseWriter, r *http.Request) {
@@ -53,4 +58,68 @@ func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
 		Publicacoes: publicacoes,
 		UsuarioId:   usuarioId,
 	})
+}
+
+func CarregarTelaDeAtualizacaoDePublicacao(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	publicacaoId, err := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
+	if err != nil {
+		respostas.InformaErro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response, err := requisicoes.FazerRequisicaoComAutenticacao(
+		r,
+		http.MethodGet,
+		fmt.Sprintf("/publicacoes/%d", publicacaoId),
+		nil,
+	)
+	if err != nil {
+		respostas.InformaErro(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	var publicacao modelos.Publicacao
+	if err = json.NewDecoder(response.Body).Decode(&publicacao); err != nil {
+		respostas.InformaErro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	utils.ExecutarTemplate(w, "atualizar-publicacao.html", publicacao)
+}
+
+func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
+	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
+
+	response, err := requisicoes.FazerRequisicaoComAutenticacao(
+		r,
+		http.MethodGet,
+		fmt.Sprintf("/usuarios?usuario=%s", url.PathEscape(nomeOuNick)),
+		nil,
+	)
+
+	if err != nil {
+		respostas.InformaErro(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	var usuarios []modelos.Usuario
+	if err = json.NewDecoder(response.Body).Decode(&usuarios); err != nil {
+		respostas.InformaErro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	utils.ExecutarTemplate(w, "usuarios.html", usuarios)
 }
