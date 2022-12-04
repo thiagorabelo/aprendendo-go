@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"log"
 	"net/http"
 	"text/template"
 )
@@ -13,5 +14,7 @@ func CarregarTemplates() {
 }
 
 func ExecutarTemplate(w http.ResponseWriter, template string, dados interface{}) {
-	templates.ExecuteTemplate(w, template, dados)
+	if err := templates.ExecuteTemplate(w, template, dados); err != nil {
+		log.Println(err)
+	}
 }

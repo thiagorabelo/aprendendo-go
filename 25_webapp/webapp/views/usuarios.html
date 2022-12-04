@@ -20,7 +20,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Usuários encontrados</h5>
-                        {{ range .Usuarios }}
+                        {{ range . }}
                             <p class="class-text">
                                 {{ .Nome }} - <a href="/usuarios/{{ .Id }}">{{ .Nick }}</a> - Membro desde: {{ .CriadoEm.Format "02/01/2006" }}
                             </p>
