@@ -118,6 +118,11 @@ func BuscarSeguidoresDoUsuario(canal chan<- []Usuario, usuarioId uint64, r *http
 		return
 	}
 
+	if seguidores == nil {
+		canal <- make([]Usuario, 0)
+		return
+	}
+
 	canal <- seguidores
 }
 
@@ -140,6 +145,11 @@ func BuscarSeguidosDoUsuario(canal chan<- []Usuario, usuarioId uint64, r *http.R
 		return
 	}
 
+	if seguidos == nil {
+		canal <- make([]Usuario, 0)
+		return
+	}
+
 	canal <- seguidos
 }
 
@@ -159,6 +169,11 @@ func BuscarPublicacoesDoUsuario(canal chan<- []Publicacao, usuarioId uint64, r *
 	var publicacoes []Publicacao
 	if err := json.NewDecoder(response.Body).Decode(&publicacoes); err != nil {
 		canal <- nil
+		return
+	}
+
+	if publicacoes == nil {
+		canal <- make([]Publicacao, 0)
 		return
 	}
 

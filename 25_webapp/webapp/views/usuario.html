@@ -29,7 +29,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Perfil do Usuário</h5>
                         <h6 class="card-subtitle mb-2 text-muted">
-                            {{ .Usuario.Nome }} - {{ .Usuario.Nick }} - 
+                            {{ .Usuario.Nome }} - {{ .Usuario.Nick }} -
                             Desde {{ .Usuario.CriadoEm.Format "02/01/2006" }}
                         </h6>
 
@@ -45,16 +45,15 @@
                             </a>
                         </p>
 
-                        <a href="#" class="card-link">
-                            {{ if $SeguidoPeloUsuarioLogado }}
-                                <button id="parar-de-seguir" class="btn btn-danger" data-usuario-id="{{ .Usuario.Id }}">
-                                    Parar de Seguir
-                                </button>
-                            {{ else }}
-                                <button id="seguir" class="btn btn-info" data-usuario-id="{{ .Usuario.Id }}">
-                                    Parar de Seguir
-                                </button>
-                            {{ end }}
+                        {{ if $SeguidoPeloUsuarioLogado }}
+                            <a href="#" id="parar-de-seguir" class="btn btn-danger card-link" data-usuario-id="{{ .Usuario.Id }}">
+                                Parar de Seguir
+                            </a>
+                        {{ else }}
+                            <a href="#" id="seguir" class="btn btn-info card-link" data-usuario-id="{{ .Usuario.Id }}">
+                                Seguir
+                            </a>
+                        {{ end }}
                         </a>
                     </div>
                 </div>
@@ -86,6 +85,7 @@
     {{ template "rodape" }}
     {{ template "scripts" }}
     <script type="text/javascript" src="/assets/js/publicacoes.js"></script>
+    <script type="text/javascript" src="/assets/js/usuario.js"></script>
 </body>
 
 </html>
