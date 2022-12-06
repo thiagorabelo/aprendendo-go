@@ -287,8 +287,8 @@ func (repositorio Usuarios) BuscarSenha(usuarioId uint64) (string, error) {
 func (repositorio Usuarios) AtualizarSenha(usuarioId uint64, senha string) error {
 	if _, err := repositorio.execute(
 		"update usuarios set senha = ? where id = ?",
-		usuarioId,
 		senha,
+		usuarioId,
 	); err != nil {
 		return err
 	}

@@ -154,3 +154,7 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		UsuarioLogadoId: usuarioLogadoId,
 	})
 }
+
+func CarregarPaginaDeAtualizacaoDeSenha(w http.ResponseWriter, r *http.Request) {
+	utils.ExecutarTemplate(w, "atualizar-senha.html", nil)
+}
