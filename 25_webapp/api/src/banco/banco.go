@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"
+	// _ "github.com/lib/pq"
 )
 
 func Conectar() (*sql.DB, error) {
@@ -23,6 +24,7 @@ func Conectar() (*sql.DB, error) {
 	// }
 	// db, err := sql.Open("mysql", cfg.FormatDSN())
 
+	// db, err := sql.Open("postgres", config.URLBanco)
 	db, err := sql.Open("mysql", config.URLBanco)
 	if err != nil {
 		return nil, err

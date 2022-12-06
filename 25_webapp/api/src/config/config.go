@@ -32,6 +32,7 @@ func Carregar() {
 		Porta = 9000
 	}
 
+	// MySQL
 	URLBanco = fmt.Sprintf(
 		// user:password@tcp(localhost:5555)/dbname?charset=utf8&parseTime=True&loc=Local
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
@@ -42,6 +43,18 @@ func Carregar() {
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
 	)
+
+	// // PostgreSQL
+	// URLBanco = fmt.Sprintf(
+	// 	// postgres://user:password@localhost:port/dbname?sslmode=disable
+	// 	"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+
+	// 	os.Getenv("DB_USER"),
+	// 	os.Getenv("DB_PASS"),
+	// 	os.Getenv("DB_HOST"),
+	// 	os.Getenv("DB_PORT"),
+	// 	os.Getenv("DB_NAME"),
+	// )
 
 	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
