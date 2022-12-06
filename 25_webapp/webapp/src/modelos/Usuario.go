@@ -42,28 +42,28 @@ func BuscarUsuarioCompleto(usuarioId uint64, r *http.Request) (Usuario, error) {
 		select {
 		case usuarioCarregado := <-canalUsuario:
 			if usuarioCarregado.Id == 0 {
-				return Usuario{}, errors.New("Erro ao buscar o usuário")
+				return Usuario{}, errors.New("erro ao buscar o usuário")
 			}
 
 			usuario = usuarioCarregado
 
 		case seguidoresCarregados := <-canalSeguidores:
 			if seguidoresCarregados == nil {
-				return Usuario{}, errors.New("Erro ao buscar os seguidores do usuário")
+				return Usuario{}, errors.New("erro ao buscar os seguidores do usuário")
 			}
 
 			seguidores = seguidoresCarregados
 
 		case seguidosCarregados := <-canalSeguidos:
 			if seguidosCarregados == nil {
-				return Usuario{}, errors.New("Erro ao buscar os seguidos do usuário")
+				return Usuario{}, errors.New("erro ao buscar os seguidos do usuário")
 			}
 
-			seguidores = seguidosCarregados
+			seguidos = seguidosCarregados
 
 		case publicacoesCarregadas := <-canalPublicacoes:
 			if publicacoesCarregadas == nil {
-				return Usuario{}, errors.New("Erro ao buscar as publicações do usuário")
+				return Usuario{}, errors.New("erro ao buscar as publicações do usuário")
 			}
 
 			publicacoes = publicacoesCarregadas
@@ -77,7 +77,7 @@ func BuscarUsuarioCompleto(usuarioId uint64, r *http.Request) (Usuario, error) {
 	return usuario, nil
 }
 
-func BuscarDadosDoUsuario(canal chan<- Usuario, usuarioId uint64, r *http.Request) {
+func RecuperarDadosDoUsuarioViaAPI(usuarioId uint64, r *http.Request) (Usuario, error) {
 	response, err := requisicoes.FazerRequisicaoComAutenticacao(
 		r,
 		http.MethodGet,
@@ -85,17 +85,24 @@ func BuscarDadosDoUsuario(canal chan<- Usuario, usuarioId uint64, r *http.Reques
 		nil,
 	)
 	if err != nil {
-		canal <- Usuario{}
-		return
+		return Usuario{}, err
 	}
 	defer response.Body.Close()
 
 	var usuario Usuario
 	if err := json.NewDecoder(response.Body).Decode(&usuario); err != nil {
+		return Usuario{}, err
+	}
+
+	return usuario, nil
+}
+
+func BuscarDadosDoUsuario(canal chan<- Usuario, usuarioId uint64, r *http.Request) {
+	usuario, err := RecuperarDadosDoUsuarioViaAPI(usuarioId, r)
+	if err != nil {
 		canal <- Usuario{}
 		return
 	}
-
 	canal <- usuario
 }
 

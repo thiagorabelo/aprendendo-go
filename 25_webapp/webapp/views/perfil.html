@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social - {{ .Usuario.Nome }}</title>
+    <title>Social - Meu Perfil</title>
     <link rel="stylesheet" href="/assets/css/bootstrap.css">
 
     {{ template "estilo" }}
@@ -14,47 +14,39 @@
 <body>
     {{ template "cabecalho" }}
 
-    {{ $SeguidoPeloUsuarioLogado := false }}
-    {{ range .Usuario.Seguidores }}
-        {{ if (eq .Id $.UsuarioLogadoId )}}
-            {{ $SeguidoPeloUsuarioLogado = true }}
-            {{ break }}
-        {{ end }}
-    {{ end }}
-
     <div class="container-fluid">
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Perfil do Usuário</h5>
+                        <h5 class="card-title">Meu Perfil</h5>
                         <h6 class="card-subtitle mb-2 text-muted">
-                            {{ .Usuario.Nome }} - {{ .Usuario.Nick }} -
-                            Desde {{ .Usuario.CriadoEm.Format "02/01/2006" }}
+                            {{ .Nome }} - {{ .Nick }} - Membro desde:
+                            {{ .CriadoEm.Format "02/01/2006" }}
                         </h6>
 
                         <p class="card-text">
                             <a href="#" data-toggle="modal" data-target="#modal-seguidores">
-                                Seguidores: {{ len .Usuario.Seguidores }}
+                                Seguidores: {{ len .Seguidores }}
                             </a>
                         </p>
 
                         <p class="card-text">
                             <a href="#" data-toggle="modal" data-target="#modal-seguindo">
-                                Seguindo: {{ len .Usuario.Seguindo }}
+                                Seguindo: {{ len .Seguindo }}
                             </a>
                         </p>
 
-                        {{ if $SeguidoPeloUsuarioLogado }}
-                            <a href="#" id="parar-de-seguir" class="btn btn-danger card-link" data-usuario-id="{{ .Usuario.Id }}">
-                                Parar de Seguir
-                            </a>
-                        {{ else }}
-                            <a href="#" id="seguir" class="btn btn-info card-link" data-usuario-id="{{ .Usuario.Id }}">
-                                Seguir
-                            </a>
-                        {{ end }}
-                        </a>
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="/editar-usuario" class="card-link btn btn-info">
+                                    Editar Usuário
+                                </a>
+                                <a href="/atualizar-senha" class="card-link btn btn-info">
+                                    Atualizar Senha
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -64,12 +56,10 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">
-                            Publicações do Usuário {{ .Usuario.Nick }}
-                        </h5>
+                        <h5 class="card-title">Minhas Publicações</h5>
                         <p class="card-text">
-                            {{ range .Usuario.Publicacoes }}
-                                {{ template "publicacao-sem-permissao" . }}
+                            {{ range .Publicacoes }}
+                                {{ template "publicacao-com-permissao" . }}
                             {{ else }}
                                 <p class="text-muted text-center">
                                     Nenhuma publicação por enquanto
@@ -82,12 +72,13 @@
         </div>
     </div>
 
-    {{ template "modal-seguidores" .Usuario }}
-    {{ template "modal-seguindo" .Usuario }}
+
+    {{ template "modal-seguidores" . }}
+    {{ template "modal-seguindo" . }}
+
     {{ template "rodape" }}
     {{ template "scripts" }}
     <script src="/assets/js/publicacoes.js"></script>
-    <script src="/assets/js/usuario.js"></script>
 </body>
 
 </html>

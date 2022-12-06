@@ -132,14 +132,19 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cookie, _ := cookies.Ler(r)
+	usuarioLogadoId, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	if usuarioId == usuarioLogadoId {
+		http.Redirect(w, r, "/perfil", http.StatusFound)
+		return
+	}
+
 	usuario, err := modelos.BuscarUsuarioCompleto(usuarioId, r)
 	if err != nil {
 		respostas.InformaErro(w, http.StatusInternalServerError, err)
 		return
 	}
-
-	cookie, _ := cookies.Ler(r)
-	usuarioLogadoId, _ := strconv.ParseUint(cookie["id"], 10, 64)
 
 	utils.ExecutarTemplate(w, "usuario.html", struct {
 		Usuario         modelos.Usuario
